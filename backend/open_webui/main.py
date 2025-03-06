@@ -57,6 +57,7 @@ from open_webui.routers import (
     images,
     ollama,
     openai,
+    mcp,
     retrieval,
     pipelines,
     tasks,
@@ -448,6 +449,18 @@ app.state.config.OPENAI_API_KEYS = OPENAI_API_KEYS
 app.state.config.OPENAI_API_CONFIGS = OPENAI_API_CONFIGS
 
 app.state.OPENAI_MODELS = {}
+
+########################################
+#
+# MCP
+#
+########################################
+
+app.state.config.ENABLE_MCP_API = False
+app.state.config.MCP_BASE_URLS = []
+app.state.config.MCP_API_CONFIGS = {}
+
+app.state.MCP_MODELS = {}
 
 ########################################
 #
@@ -868,6 +881,7 @@ app.mount("/ws", socket_app)
 
 app.include_router(ollama.router, prefix="/ollama", tags=["ollama"])
 app.include_router(openai.router, prefix="/openai", tags=["openai"])
+app.include_router(mcp.router, prefix="/mcp", tags=["mcp"])
 
 
 app.include_router(pipelines.router, prefix="/api/v1/pipelines", tags=["pipelines"])

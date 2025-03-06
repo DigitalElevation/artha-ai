@@ -15,6 +15,7 @@
 	import Connections from './Settings/Connections.svelte';
 	import Documents from './Settings/Documents.svelte';
 	import WebSearch from './Settings/WebSearch.svelte';
+	import MCPSettings from '../settings/MCPSettings.svelte';
 
 	import ChartBar from '../icons/ChartBar.svelte';
 	import DocumentChartBar from '../icons/DocumentChartBar.svelte';
@@ -92,6 +93,28 @@
 				</svg>
 			</div>
 			<div class=" self-center">{$i18n.t('Connections')}</div>
+		</button>
+
+		<button
+			class="px-0.5 py-1 min-w-fit rounded-lg flex-1 md:flex-none flex text-right transition {selectedTab ===
+			'mcp'
+				? ''
+				: ' text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'}"
+			on:click={() => {
+				selectedTab = 'mcp';
+			}}
+		>
+			<div class=" self-center mr-2">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 16 16"
+					fill="currentColor"
+					class="w-4 h-4"
+				>
+					<path d="M3.75 2a.75.75 0 0 0-.75.75v10.5c0 .414.336.75.75.75h1.5a.75.75 0 0 0 .75-.75v-10.5A.75.75 0 0 0 5.25 2h-1.5ZM10.75 2a.75.75 0 0 0-.75.75v10.5c0 .414.336.75.75.75h1.5a.75.75 0 0 0 .75-.75v-10.5a.75.75 0 0 0-.75-.75h-1.5ZM9.75 8.75a.75.75 0 0 0-.75-.75h-2a.75.75 0 0 0 0 1.5h2a.75.75 0 0 0 .75-.75Z" />
+				</svg>
+			</div>
+			<div class=" self-center">{$i18n.t('MCP Servers')}</div>
 		</button>
 
 		<button

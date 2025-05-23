@@ -333,6 +333,20 @@ ENABLE_REALTIME_CHAT_SAVE = (
 REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
 
 ####################################
+# UVICORN WORKERS
+####################################
+
+# Number of uvicorn worker processes for handling requests
+UVICORN_WORKERS = os.environ.get("UVICORN_WORKERS", "1")
+try:
+    UVICORN_WORKERS = int(UVICORN_WORKERS)
+    if UVICORN_WORKERS < 1:
+        UVICORN_WORKERS = 1
+except ValueError:
+    UVICORN_WORKERS = 1
+    log.info(f"Invalid UVICORN_WORKERS value, defaulting to {UVICORN_WORKERS}")
+
+####################################
 # WEBUI_AUTH (Required for security)
 ####################################
 
@@ -344,6 +358,10 @@ WEBUI_AUTH_TRUSTED_NAME_HEADER = os.environ.get("WEBUI_AUTH_TRUSTED_NAME_HEADER"
 
 BYPASS_MODEL_ACCESS_CONTROL = (
     os.environ.get("BYPASS_MODEL_ACCESS_CONTROL", "False").lower() == "true"
+)
+
+WEBUI_AUTH_SIGNOUT_REDIRECT_URL = os.environ.get(
+    "WEBUI_AUTH_SIGNOUT_REDIRECT_URL", None
 )
 
 ####################################
@@ -397,6 +415,11 @@ else:
     except Exception:
         AIOHTTP_CLIENT_TIMEOUT = 300
 
+
+AIOHTTP_CLIENT_SESSION_SSL = (
+    os.environ.get("AIOHTTP_CLIENT_SESSION_SSL", "True").lower() == "true"
+)
+
 AIOHTTP_CLIENT_TIMEOUT_MODEL_LIST = os.environ.get(
     "AIOHTTP_CLIENT_TIMEOUT_MODEL_LIST",
     os.environ.get("AIOHTTP_CLIENT_TIMEOUT_OPENAI_MODEL_LIST", ""),
@@ -412,6 +435,71 @@ else:
         AIOHTTP_CLIENT_TIMEOUT_MODEL_LIST = 5
 
 
+
+AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA = os.environ.get(
+    "AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA", "10"
+)
+
+if AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA == "":
+    AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA = None
+else:
+    try:
+        AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA = int(
+            AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA
+        )
+    except Exception:
+        AIOHTTP_CLIENT_TIMEOUT_TOOL_SERVER_DATA = 10
+
+
+AIOHTTP_CLIENT_SESSION_TOOL_SERVER_SSL = (
+    os.environ.get("AIOHTTP_CLIENT_SESSION_TOOL_SERVER_SSL", "True").lower() == "true"
+)
+
+
+####################################
+# SENTENCE TRANSFORMERS
+####################################
+
+
+SENTENCE_TRANSFORMERS_BACKEND = os.environ.get("SENTENCE_TRANSFORMERS_BACKEND", "")
+if SENTENCE_TRANSFORMERS_BACKEND == "":
+    SENTENCE_TRANSFORMERS_BACKEND = "torch"
+
+
+SENTENCE_TRANSFORMERS_MODEL_KWARGS = os.environ.get(
+    "SENTENCE_TRANSFORMERS_MODEL_KWARGS", ""
+)
+if SENTENCE_TRANSFORMERS_MODEL_KWARGS == "":
+    SENTENCE_TRANSFORMERS_MODEL_KWARGS = None
+else:
+    try:
+        SENTENCE_TRANSFORMERS_MODEL_KWARGS = json.loads(
+            SENTENCE_TRANSFORMERS_MODEL_KWARGS
+        )
+    except Exception:
+        SENTENCE_TRANSFORMERS_MODEL_KWARGS = None
+
+
+SENTENCE_TRANSFORMERS_CROSS_ENCODER_BACKEND = os.environ.get(
+    "SENTENCE_TRANSFORMERS_CROSS_ENCODER_BACKEND", ""
+)
+if SENTENCE_TRANSFORMERS_CROSS_ENCODER_BACKEND == "":
+    SENTENCE_TRANSFORMERS_CROSS_ENCODER_BACKEND = "torch"
+
+
+SENTENCE_TRANSFORMERS_CROSS_ENCODER_MODEL_KWARGS = os.environ.get(
+    "SENTENCE_TRANSFORMERS_CROSS_ENCODER_MODEL_KWARGS", ""
+)
+if SENTENCE_TRANSFORMERS_CROSS_ENCODER_MODEL_KWARGS == "":
+    SENTENCE_TRANSFORMERS_CROSS_ENCODER_MODEL_KWARGS = None
+else:
+    try:
+        SENTENCE_TRANSFORMERS_CROSS_ENCODER_MODEL_KWARGS = json.loads(
+            SENTENCE_TRANSFORMERS_CROSS_ENCODER_MODEL_KWARGS
+        )
+    except Exception:
+        SENTENCE_TRANSFORMERS_CROSS_ENCODER_MODEL_KWARGS = None
+
 ####################################
 # OFFLINE_MODE
 ####################################
@@ -420,6 +508,7 @@ OFFLINE_MODE = os.environ.get("OFFLINE_MODE", "false").lower() == "true"
 
 if OFFLINE_MODE:
     os.environ["HF_HUB_OFFLINE"] = "1"
+
 
 ####################################
 # AUDIT LOGGING
@@ -442,3 +531,34 @@ AUDIT_EXCLUDED_PATHS = os.getenv("AUDIT_EXCLUDED_PATHS", "/chats,/chat,/folders"
 )
 AUDIT_EXCLUDED_PATHS = [path.strip() for path in AUDIT_EXCLUDED_PATHS]
 AUDIT_EXCLUDED_PATHS = [path.lstrip("/") for path in AUDIT_EXCLUDED_PATHS]
+
+
+####################################
+# OPENTELEMETRY
+####################################
+
+ENABLE_OTEL = os.environ.get("ENABLE_OTEL", "False").lower() == "true"
+OTEL_EXPORTER_OTLP_ENDPOINT = os.environ.get(
+    "OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317"
+)
+OTEL_SERVICE_NAME = os.environ.get("OTEL_SERVICE_NAME", "open-webui")
+OTEL_RESOURCE_ATTRIBUTES = os.environ.get(
+    "OTEL_RESOURCE_ATTRIBUTES", ""
+)  # e.g. key1=val1,key2=val2
+OTEL_TRACES_SAMPLER = os.environ.get(
+    "OTEL_TRACES_SAMPLER", "parentbased_always_on"
+).lower()
+
+####################################
+# TOOLS/FUNCTIONS PIP OPTIONS
+####################################
+
+PIP_OPTIONS = os.getenv("PIP_OPTIONS", "").split()
+PIP_PACKAGE_INDEX_OPTIONS = os.getenv("PIP_PACKAGE_INDEX_OPTIONS", "").split()
+
+
+####################################
+# PROGRESSIVE WEB APP OPTIONS
+####################################
+
+EXTERNAL_PWA_MANIFEST_URL = os.environ.get("EXTERNAL_PWA_MANIFEST_URL")
